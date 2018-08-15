@@ -86,6 +86,34 @@ app.delete('/shopping-list/:id', (req, res) => {
 });
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 app.get('/recipes', (req, res) => {
   res.json(Recipes.get());
 });
@@ -110,6 +138,26 @@ app.delete('/recipes/:id', (req, res) => {
   console.log(`Deleted recipe \`${req.params.ID}\``);
   res.status(204).end();
 });
+
+app.put('/recipes/:id', jsonParser, (req, res) => {
+  const listOfKeysNeeded = ["name", "id", "ingredients"];
+  for(let i =0; i < listOfKeysNeeded.length; i++){
+    const key = listOfKeysNeeded[i];
+    if(!(key in req.body)){
+      res.status(400).send(`Error: ${key} not found in request body`);
+    }
+  }
+  if(!(req.params.id == req.body.id)){
+    res.status(400).send('Error: Named parameter and id of object in body must match');
+  }
+
+  const {name, id, ingredients} = req.body;
+  const item = {name, id, ingredients};
+  Recipes.update(item);
+  res.status(204).end();
+})
+
+
 
 app.listen(process.env.PORT || 8080, () => {
   console.log(`Your app is listening on port ${process.env.PORT || 8080}`);
